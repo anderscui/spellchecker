@@ -1,2 +1,3 @@
 # spellchecker
-A spell checker implemented by Python.
+
+A spell checker implemented in Python.
