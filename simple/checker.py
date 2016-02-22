@@ -1,3 +1,9 @@
+"""Spelling Corrector.
+
+Copyright 2007 Peter Norvig.
+Open source code under MIT license: http://www.opensource.org/licenses/mit-license.php
+"""
+
 import re, collections
 
 
