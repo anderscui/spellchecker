@@ -247,6 +247,6 @@ tests2 = {'forbidden': 'forbiden', 'decisions': 'deciscions descisions',
 'together': 'togehter', 'profits': 'proffits'}
 
 if __name__ == '__main__':
-    print spelltest(tests1)
-    #print spelltest(tests2)
+    print spelltest(tests1, verbose=True)
+    print spelltest(tests2, verbose=True)
 

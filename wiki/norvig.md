@@ -145,3 +145,6 @@ def correct(word):
 
 training & eval dataset.
 
+In conclusion, I met my goals for brevity, development time, and runtime speed, but not for accuracy. 
+
+## 
