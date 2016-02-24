@@ -1,7 +1,9 @@
-import time
 import datetime
+import glob
+import os
+import time
 
-from common import io
+from common.io import append_line, read_lines, write_str
 
 
 def read_line(line, n=1, version='20090715'):
@@ -9,77 +11,73 @@ def read_line(line, n=1, version='20090715'):
     return parts[0], int(parts[2])
 
 
-def merge_lines(lines):
-    tokens = []
-    cur_token = None
-    cur_token_count = 0
-    for line in lines:
-        if cur_token == None:
-            cur_token = line[0]
-            cur_token_count = line[1]
-        else:
-            if cur_token == line[0]:
-                cur_token_count += line[1]
-            else:
-                tokens.append((cur_token, cur_token_count))
+def extract_tokens(data_file, output_file):
+    """
+    extract token stats in the data_file, save it in output_file.
+    :param data_file:
+    :param output_file:
+    """
+    start_time = datetime.datetime.now()
+    # print(start_time)
+    print('extracting started...')
 
+    with open(data_file) as f:
+
+        cur_token = None
+        cur_token_count = 0
+
+        for raw_line in f:
+
+            line = read_line(raw_line)
+            if cur_token is None:
                 cur_token = line[0]
                 cur_token_count = line[1]
+            else:
+                if cur_token == line[0]:
+                    cur_token_count += line[1]
+                else:
+                    append_line(output_file, '%s\t%d' % (cur_token, cur_token_count))
 
-    tokens.append((cur_token, cur_token_count))
-    return tokens
+                    cur_token = line[0]
+                    cur_token_count = line[1]
+
+        if cur_token:
+            append_line(output_file, '%s\t%d' % (cur_token, cur_token_count))
+
+    complete_time = datetime.datetime.now()
+    print('extracting completed...')
+    print('time elapsed: {0}'.format(complete_time - start_time))
 
 
-#file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-0.csv'
-# i = 0
-# lines = []
-# with open(file_path) as f:
-#     for line in f:
-#         # time.sleep(1)
-#         # print(line.strip())
-#         lines.append(line.strip())
-#
-#         i += 1
-#         if i >= 100000:
-#             break
-#
-# io.write_str('../data/ngrams/1gram_data_less.csv', '\n'.join(lines))
+def extract_dir_tokens(data_dir, output_dir):
 
-def append_line(file_path, line):
-    with open(file_path, "a") as f:
-        f.write(line)
+    cwd = os.getcwdu()
+    print('cwd: {0}'.format(cwd))
+    print('change wd to: {0}'.format(data_dir))
+    os.chdir(data_dir)
 
-print(datetime.datetime.now())
+    for f in glob.glob('*.csv'):
+        print(f)
+        print(os.path.getsize(f))
+        name, ext = os.path.splitext(f)
+        print(name + '-out.txt')
+
+        extract_tokens(f, name + '-out.txt')
+
+    print('change wd back to: {0}'.format(cwd))
+    os.chdir(cwd)
+
+# file_path = '../data/ngrams/googlebooks-eng-1M-4gram-20090715-0.csv'
+# lines = list(read_lines(file_path, 100000))
+# write_str('./4gram_data_less.csv', ''.join(lines))
 
 # file_path = './1gram_data_less.csv'
 # out_file = './1gram_token_less.txt'
-
 # file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-0.csv'
 # out_file = './googlebooks-eng-1M-1gram-20090715-0-out.txt'
+file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-2.csv'
+out_file = './googlebooks-eng-1M-1gram-20090715-2-out.txt'
 
-file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-1.csv'
-out_file = './googlebooks-eng-1M-1gram-20090715-1-out.txt'
-with open(file_path) as f:
+# extract_tokens(file_path, out_file)
 
-    cur_token = None
-    cur_token_count = 0
-
-    for raw_line in f:
-
-        line = read_line(raw_line)
-        if cur_token == None:
-            cur_token = line[0]
-            cur_token_count = line[1]
-        else:
-            if cur_token == line[0]:
-                cur_token_count += line[1]
-            else:
-                # unigrams.append((cur_token, cur_token_count))
-                append_line(out_file, '%s %d\n' % (cur_token, cur_token_count))
-
-                cur_token = line[0]
-                cur_token_count = line[1]
-
-    append_line(out_file, '%s %d\n' % (cur_token, cur_token_count))
-
-print(datetime.datetime.now())
+extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams', '.')
