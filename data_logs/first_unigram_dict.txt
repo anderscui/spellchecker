@@ -1,0 +1,3 @@
+total lines: 3222703
+total word lines: 1262982
+total unique words: 1262982
