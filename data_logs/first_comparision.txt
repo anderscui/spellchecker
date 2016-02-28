@@ -1,0 +1,7 @@
+Google dict:
+{'bad': 211, 'bias': None, 'unknown': 0, 'secs': 0, 'pct': 21, 'n': 270}
+{'bad': 327, 'bias': None, 'unknown': 2, 'secs': 2, 'pct': 18, 'n': 400}
+
+Norvig dict:
+{'bad': 68, 'bias': None, 'unknown': 15, 'secs': 5, 'pct': 74, 'n': 270}
+{'bad': 130, 'bias': None, 'unknown': 43, 'secs': 9, 'pct': 67, 'n': 400}
