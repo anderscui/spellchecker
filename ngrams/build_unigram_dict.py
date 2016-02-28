@@ -59,4 +59,4 @@ def build_unigram_dict(data_dir):
 
 
 if __name__ == '__main__':
-    build_unigram_dict(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\ngrams\token-freq')
+    build_unigram_dict(r'/Users/andersc/data/eng-1M-token-freq/')
