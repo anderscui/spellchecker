@@ -56,13 +56,21 @@ def extract_dir_tokens(data_dir, output_dir):
     print('change wd to: {0}'.format(data_dir))
     os.chdir(data_dir)
 
-    for f in glob.glob('*.csv'):
-        print(f)
-        print(os.path.getsize(f))
-        name, ext = os.path.splitext(f)
-        print(name + '-out.txt')
+    output_dir = './output/'
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
 
-        extract_tokens(f, name + '-out.txt')
+    for f in glob.glob('*.csv'):
+        # print(f)
+        # print(os.path.getsize(f))
+        name, ext = os.path.splitext(f)
+        output_file = output_dir + name + '-out.txt'
+        print('generatint to ' + output_file)
+
+        if not os.path.exists(output_file):
+            extract_tokens(f, output_file)
+        else:
+            print(output_file + ' already exits...')
 
     print('change wd back to: {0}'.format(cwd))
     os.chdir(cwd)
@@ -75,9 +83,9 @@ def extract_dir_tokens(data_dir, output_dir):
 # out_file = './1gram_token_less.txt'
 # file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-0.csv'
 # out_file = './googlebooks-eng-1M-1gram-20090715-0-out.txt'
-file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-2.csv'
-out_file = './googlebooks-eng-1M-1gram-20090715-2-out.txt'
+# file_path = '../data/ngrams/googlebooks-eng-1M-1gram-20090715-2.csv'
+# out_file = './googlebooks-eng-1M-1gram-20090715-2-out.txt'
 
 # extract_tokens(file_path, out_file)
 
-extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams', '.')
+extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram', '.')
