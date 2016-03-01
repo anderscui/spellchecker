@@ -13,3 +13,5 @@ print(en_dict['click'])
 print(en_dict["doesn't"])
 print(en_dict["can't"])
 print(en_dict["cannot"])
+
+print(en_dict["first-class"])

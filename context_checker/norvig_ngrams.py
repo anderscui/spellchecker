@@ -1,3 +1,4 @@
+# coding=utf-8
 """Ngram Samples by Peter Norgiv.
 Beautiful Data
 Copyright ©2009 O'Reilly Media, Inc.
@@ -100,6 +101,24 @@ P2w = Pdist(datafile('../data/norvig/count_2w.txt'), N)
 
 
 # print(cPw('sit', 'to') * cPw('down', 'sit') / cPw('sitdown', 'to'))
+
+def sPw(s, n=2):
+    if not s:
+        return None
+
+    words = ['<S>'] + s.lower().split(' ')
+    print(words)
+    return sum([log10(cPw(words[i], words[i-1])) for i in xrange(1, len(words))])
+
+# print(cPw('sit', 'to') * cPw('down', 'sit') / cPw('sitdown', 'to'))
+
+# the house is small vs. small the is house
+print(sPw('the house is small'))
+print(sPw('small the is house'))
+
+print(sPw('I am going home'))
+print(sPw('I am going house'))
+
 
 @memo
 def segment2(text, prev='<S>'):
