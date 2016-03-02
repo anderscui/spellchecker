@@ -1,0 +1,31 @@
+Web 1T corpus vs. Google Books 1M English corpus
+
+Web 1T corpus
+
+good:    365796396
+goood:   132722
+spelling: not found
+speling: 28346
+
+good: goood -> 2756
+
+
+Google Books 1M English corpus
+
+good: 65585814
+goood: 329
+spelling: 762044
+speling: 647
+
+good: goood -> 199349
+
+----------
+
+Hypothesis:
+
+Web and Books are two different contexts, normally the books are well proofread, while the web pages are not.
+
+Even in many cases, "goood" is a valid word which is similar to words like LOL, WTF etc.
+
+So for checkers in blog or twitter contexts, we can use the Web 1T, for student homeworks or papers, we should use corpus like the Books 1T (maybe also remove the words with too low freqencies).
+

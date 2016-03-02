@@ -1,6 +1,6 @@
 from common.persistence import from_pickle
 
-en_dict = from_pickle('../data/en_dict.pkl')
+en_dict = from_pickle('../data/ngrams/en_dict.pkl')
 print(en_dict['the'])
 print(en_dict['of'])
 print(en_dict['and'])
@@ -15,3 +15,9 @@ print(en_dict["can't"])
 print(en_dict["cannot"])
 
 print(en_dict["first-class"])
+
+# non-real words
+print(en_dict['good'])
+print(en_dict['goood'])
+print(en_dict['spelling'])
+print(en_dict['speling'])

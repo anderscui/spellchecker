@@ -4,6 +4,7 @@ Beautiful Data
 Copyright ©2009 O'Reilly Media, Inc.
 """
 import operator
+import re
 from math import log10
 
 
@@ -108,16 +109,7 @@ def sPw(s, n=2):
 
     words = ['<S>'] + s.lower().split(' ')
     print(words)
-    return sum([log10(cPw(words[i], words[i-1])) for i in xrange(1, len(words))])
-
-# print(cPw('sit', 'to') * cPw('down', 'sit') / cPw('sitdown', 'to'))
-
-# the house is small vs. small the is house
-print(sPw('the house is small'))
-print(sPw('small the is house'))
-
-print(sPw('I am going home'))
-print(sPw('I am going house'))
+    return sum([log10(cPw(words[i], words[i - 1])) for i in xrange(1, len(words))])
 
 
 @memo
@@ -134,16 +126,136 @@ def segment2(text, prev='<S>'):
 def combine(Pfirst, first, (Prem, rem)):
     return Pfirst + Prem, [first] + rem
 
-#
-if __name__ == '__main__':
-    # print(segment('whereareyoufrom'))
+
+def corrections(text):
+    """
+    spell correct all words in text.
+    :param text: the input text
+    :return: the corrected text
+    """
+    return re.sub('[a-zA-Z]+', lambda m: correct(m.group(0)), text)
+
+
+def correct(w):
+
+    candicates = edits(w).items()
+    c, edit = max(candicates, key=lambda (c, e): Pedit(e) * Pw(c))
+    return c
+
+# common error rate
+p_spell_error = 1./20
+
+
+def Pedit(edit):
+    if edit == '':
+        return (1. - p_spell_error)
+
+    return p_spell_error * product(P1edit(e) for e in edit.split('+'))
+
+
+# the prob of single edits
+P1edit = Pdist(datafile('../data/norvig/count_1edit.txt'))
+
+alphabet = 'abcdefghijklmnopqrstuvwxyz'
+PREFIXES = set(w[:i] for w in Pw for i in xrange(len(w)+1))
+
+
+def edits(word, d=2):
+    results = {}
+    def editsR(hd, tl, d, edits):
+        def ed(L, R):
+            return edits + [R + '|' + L]
+        C = hd+tl
+        # if C is in the dict
+        if C in Pw:
+            e = '+'.join(edits)
+            if C not in results:
+                results[C] = e
+            else:
+                results[C] = max(results[C], e, key=Pedit)
+
+        if d <= 0:
+            return
+
+        extensions = [hd+c for c in alphabet if hd+c in PREFIXES]
+        # previous char
+        p = (hd[-1] if hd else '<')
+
+        # insertion
+        for h in extensions:
+            editsR(h, tl, d-1, ed(p+h[-1], p))
+        if not tl:
+            return
+
+        # deletion
+        editsR(hd, tl[1:], d-1, ed(p, p+tl[0]))
+        for h in extensions:
+            # match
+            if h[-1] == tl[0]:
+                editsR(h, tl[1:], d, edits)
+            else: # replacement
+                editsR(h, tl[1:], d-1, ed(h[-1], tl[0]))
+
+        # transpose
+        if len(tl) >= 2 and tl[0] != tl[1] and hd+tl[1] in PREFIXES:
+            editsR(hd+tl[1], tl[0]+tl[2:], d-1, ed(tl[1]+tl[0], tl[0:2]))
+
+    # body of edits
+    editsR('', word, d, [])
+    return results
+
+
+## test cases
+def test_sentence_pw():
+    # the house is small vs. small the is house
+    print(sPw('the house is small'))
+    print(sPw('small the is house'))
+
+    print(sPw('I am going home'))
+    print(sPw('I am going house'))
+
+
+def test_segment():
     print(segment(
             'faroutintheunchartedbackwatersoftheunfashionableendofthewesternspiralarmofthegalaxyliesasmallunregardedyellowsun'))
     print(segment('tellusyourideas'))
     print(segment('itisatruthuniversallyacknowledged'))
     print(segment('iaskyoutositdown'))
 
-    print(segment2('faroutintheunchartedbackwatersoftheunfashionableendofthewesternspiralarmofthegalaxyliesasmallunregardedyellowsun'))
+    print(segment2(
+        'faroutintheunchartedbackwatersoftheunfashionableendofthewesternspiralarmofthegalaxyliesasmallunregardedyellowsun'))
     print(segment2('tellusyourideas'))
     print(segment2('itisatruthuniversallyacknowledged'))
     print(segment2('iaskyoutositdown'))
+
+
+def test_edits():
+    print(edits('adiabatic'))
+    print(edits('acommodations'))
+
+
+def test_corrections():
+    # print(Pw('good'))
+    # print(Pw('goood'))
+    # print(Pw('spelling'))
+    # print(Pw('speling'))
+    #
+    # print(correct('vokabulary'))
+    # print(correct('goood'))
+    # print(correct('speling'))
+
+    # ref: http://textblob.readthedocs.org/en/dev/quickstart.html#spelling-correction
+    # TODO: too poor
+    print(corrections('I havv goood speling!'))
+
+    # Norvig's sample
+    # 13 of 15 are OK, but acommodations and mispellings are left there.
+    print(corrections('Thiss is a teyst of acommodations for korrections of mispellings of particuler wurds.'))
+
+
+if __name__ == '__main__':
+    # test_sentence_pw()
+    # test_segment()
+    # test_edits()
+
+    test_corrections()
