@@ -51,7 +51,6 @@ def product(nums):
 
 class Pdist(dict):
     """A probability distribution estimated from counts in datafile."""
-
     def __init__(self, data=[], N=None, missingfn=None):
         for key, count in data:
             self[key] = self.get(key, 0) + int(count)
@@ -82,6 +81,7 @@ def avoid_long_words(key, N):
 
 N = 1024908267229  ## Number of tokens
 
+# TODO: cachable
 Pw = Pdist(datafile('../data/norvig/count_1w.txt'), N, avoid_long_words)
 
 
@@ -97,7 +97,7 @@ def cPw(word, prev):
     except KeyError:
         return Pw(word)
 
-
+# TODO: cachable
 P2w = Pdist(datafile('../data/norvig/count_2w.txt'), N)
 
 
@@ -147,6 +147,7 @@ p_spell_error = 1./20
 
 
 def Pedit(edit):
+    # prob of 'right is right'
     if edit == '':
         return (1. - p_spell_error)
 
@@ -157,11 +158,14 @@ def Pedit(edit):
 P1edit = Pdist(datafile('../data/norvig/count_1edit.txt'))
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
+alphabet = 'ab'
+# TODO: cachable
 PREFIXES = set(w[:i] for w in Pw for i in xrange(len(w)+1))
 
 
 def edits(word, d=2):
     results = {}
+
     def editsR(hd, tl, d, edits):
         def ed(L, R):
             return edits + [R + '|' + L]
@@ -189,11 +193,13 @@ def edits(word, d=2):
 
         # deletion
         editsR(hd, tl[1:], d-1, ed(p, p+tl[0]))
+
+        # replacement
         for h in extensions:
             # match
             if h[-1] == tl[0]:
                 editsR(h, tl[1:], d, edits)
-            else: # replacement
+            else:
                 editsR(h, tl[1:], d-1, ed(h[-1], tl[0]))
 
         # transpose
@@ -259,3 +265,5 @@ if __name__ == '__main__':
     # test_edits()
 
     test_corrections()
+    # for k, v in edits('as').items():
+    #     print(k, v)
