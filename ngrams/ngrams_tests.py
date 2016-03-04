@@ -29,11 +29,11 @@ def test_read_word_freq_lower():
 def test_read_word_freq_upper():
     line = 'Test\t1999\t10\t6'
     wf = read_word_freq(line)
-    assert wf == ('test', 10)
+    assert wf == ('Test', 10)
 
     line = 'Test\t1999\t10\t6'
-    wf = read_word_freq(line, to_lower=False)
-    assert wf == ('Test', 10)
+    wf = read_word_freq(line, to_lower=True)
+    assert wf == ('test', 10)
 
     line = 'test\t1999\t10\t6'
     wf = read_word_freq(line, 1999)
@@ -41,4 +41,18 @@ def test_read_word_freq_upper():
 
     line = 'test\t1999\t10\t6'
     wf = read_word_freq(line, 2000)
+    assert wf == (None, None)
+
+
+def test_read_word_freq_en_word():
+    line = 'test\t1999\t10\t6'
+    wf = read_word_freq(line)
+    assert wf == ('test', 10)
+
+    line = 't@est\t1999\t10\t6'
+    wf = read_word_freq(line)
+    assert wf == ('t@est', 10)
+
+    line = 't@est\t1999\t10\t6'
+    wf = read_word_freq(line, en_word_only=True)
     assert wf == (None, None)

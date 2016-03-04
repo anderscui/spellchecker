@@ -7,6 +7,7 @@ from common.io import append_line, read_lines, write_str
 from ngrams import read_word_freq
 
 start_year = 1900
+buf_size = 1000
 
 
 def extract_tokens(data_file, output_file):
@@ -39,13 +40,19 @@ def extract_tokens(data_file, output_file):
                 if cur_token == token:
                     cur_token_count += freq
                 else:
-                    append_line(output_file, '%s\t%d' % (cur_token, cur_token_count))
+                    buf.append('%s\t%d' % (cur_token, cur_token_count))
 
                     cur_token = token
                     cur_token_count = freq
 
+            if len(buf) >= buf_size:
+                append_line(output_file, '\n'.join(buf))
+                buf = []
+
         if cur_token:
-            append_line(output_file, '%s\t%d' % (cur_token, cur_token_count))
+            buf.append('%s\t%d' % (cur_token, cur_token_count))
+        if buf:
+            append_line(output_file, '\n'.join(buf))
 
     complete_time = datetime.datetime.now()
     print('extracting completed...')
@@ -91,4 +98,4 @@ def extract_dir_tokens(data_dir, output_dir):
 
 # extract_tokens(file_path, out_file)
 
-extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\1gram', '.')
+extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram', '.')
