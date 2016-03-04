@@ -4,11 +4,9 @@ import os
 import time
 
 from common.io import append_line, read_lines, write_str
+from ngrams import read_word_freq
 
-
-def read_line(line, n=1, version='20090715'):
-    parts = line.strip().split('\t')
-    return parts[0], int(parts[2])
+start_year = 1900
 
 
 def extract_tokens(data_file, output_file):
@@ -18,7 +16,7 @@ def extract_tokens(data_file, output_file):
     :param output_file:
     """
     start_time = datetime.datetime.now()
-    # print(start_time)
+    print(start_time)
     print('extracting started...')
 
     with open(data_file) as f:
@@ -26,20 +24,25 @@ def extract_tokens(data_file, output_file):
         cur_token = None
         cur_token_count = 0
 
+        buf = []
+
         for raw_line in f:
 
-            line = read_line(raw_line)
+            token, freq = read_word_freq(raw_line, start_year)
+            if token is None:
+                continue
+
             if cur_token is None:
-                cur_token = line[0]
-                cur_token_count = line[1]
+                cur_token = token
+                cur_token_count = freq
             else:
-                if cur_token == line[0]:
-                    cur_token_count += line[1]
+                if cur_token == token:
+                    cur_token_count += freq
                 else:
                     append_line(output_file, '%s\t%d' % (cur_token, cur_token_count))
 
-                    cur_token = line[0]
-                    cur_token_count = line[1]
+                    cur_token = token
+                    cur_token_count = freq
 
         if cur_token:
             append_line(output_file, '%s\t%d' % (cur_token, cur_token_count))
@@ -88,4 +91,4 @@ def extract_dir_tokens(data_dir, output_dir):
 
 # extract_tokens(file_path, out_file)
 
-extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram', '.')
+extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\1gram', '.')

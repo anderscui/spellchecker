@@ -6,7 +6,7 @@ import datetime
 
 from common.io import append_line
 
-re_en_word = re.compile(r"^[a-z-'.]+$")
+re_en_word = re.compile(r"^[a-zA-Z-'.]+$")
 
 
 def is_english_word(w):
