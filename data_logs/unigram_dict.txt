@@ -1,0 +1,11 @@
+total lines: 3222703
+total word lines: 1262982
+total unique words: 1262982
+
+only lower case words were read.
+
+# second dict
+total word lines: 2840226
+total unique words: 2100724
+
+lower and upper case words are merged together.

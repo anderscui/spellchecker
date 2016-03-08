@@ -5,12 +5,7 @@ import re
 import datetime
 
 from common.io import append_line
-
-re_en_word = re.compile(r"^[a-zA-Z-'.]+$")
-
-
-def is_english_word(w):
-    return re_en_word.match(w) is not None
+from ngrams import is_english_word
 
 
 def read_word_freq(line):
@@ -60,7 +55,6 @@ def extract_unigrams(data_dir):
 
     for f in glob.glob('*1gram*.txt'):
         # print(f)
-        # print(os.path.getsize(f))
         name, ext = os.path.splitext(f)
         output_file = output_dir + name + '-unigram.txt'
         print('generatint to ' + output_file)
@@ -75,4 +69,5 @@ def extract_unigrams(data_dir):
 
 
 if __name__ == '__main__':
-    extract_unigrams(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\ngrams\token-freq')
+    # extract_unigrams(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\ngrams\token-freq')
+    extract_unigrams(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/token-freq')

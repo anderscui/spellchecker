@@ -1,26 +1,15 @@
 import glob
 import os
-import re
 
-import datetime
 from collections import defaultdict
 
-from common.io import append_line
 from common.persistence import to_pickle
-
-re_en_word = re.compile(r"^[a-z-'.]+$")
-
-
-def is_english_word(w):
-    return re_en_word.match(w) is not None
+from ngrams import is_english_word
 
 
 def read_word_freq(line):
     parts = line.split('\t')
-    if is_english_word(parts[0]):
-        return parts[0].lower(), int(parts[1])
-    else:
-        return None, None
+    return parts[0], int(parts[1])
 
 
 def build_unigram_dict(data_dir):
@@ -29,10 +18,6 @@ def build_unigram_dict(data_dir):
     print('cwd: {0}'.format(cwd))
     print('change wd to: {0}'.format(data_dir))
     os.chdir(data_dir)
-
-    output_dir = './1gram/'
-    if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
 
     en_dict = defaultdict(int)
     line_counter = 0
@@ -49,7 +34,7 @@ def build_unigram_dict(data_dir):
                     word_counter += 1
                     en_dict[word] += freq
 
-    to_pickle(en_dict, './1gram/en_dict.pkl')
+    to_pickle(en_dict, './en_dict.pkl')
     print('total lines: {}'.format(line_counter))
     print('total word lines: {}'.format(word_counter))
     print('total unique words: {}'.format(len(en_dict)))
@@ -59,4 +44,4 @@ def build_unigram_dict(data_dir):
 
 
 if __name__ == '__main__':
-    build_unigram_dict(r'/Users/andersc/data/eng-1M-token-freq/')
+    build_unigram_dict(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/token-freq/1gram/')

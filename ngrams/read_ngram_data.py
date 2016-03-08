@@ -66,7 +66,7 @@ def extract_dir_tokens(data_dir, output_dir):
     print('change wd to: {0}'.format(data_dir))
     os.chdir(data_dir)
 
-    output_dir = './output/'
+    output_dir = './token-freq/'
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -98,4 +98,5 @@ def extract_dir_tokens(data_dir, output_dir):
 
 # extract_tokens(file_path, out_file)
 
-extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram', '.')
+# extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram', '.')
+extract_dir_tokens(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/', '.')
