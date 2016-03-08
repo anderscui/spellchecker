@@ -43,5 +43,12 @@ def build_unigram_dict(data_dir):
     os.chdir(cwd)
 
 
+# dict stats
+# Min.   :1.000e+00
+# 1st Qu.:3.900e+01
+# Median :1.090e+02
+# Mean   :2.960e+04
+# 3rd Qu.:3.870e+02
+# Max.   :4.212e+09
 if __name__ == '__main__':
     build_unigram_dict(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/token-freq/1gram/')

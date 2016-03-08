@@ -45,6 +45,18 @@ def export_dict_to_file():
         append_line(filename, '\n'.join(buf))
 
 
+def larger_than(n):
+    count = 0
+    for w, freq in en_dict.items():
+        if freq > n:
+            count += 1
+
+    return count
+
 if __name__ == '__main__':
     # check_dic_freq()
-    export_dict_to_file()
+    # export_dict_to_file()
+    print(larger_than(387))
+    print(larger_than(549)) # speling
+    print(larger_than(1000))
+    print(larger_than(10000))
