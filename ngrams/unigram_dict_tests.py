@@ -45,6 +45,26 @@ def export_dict_to_file():
         append_line(filename, '\n'.join(buf))
 
 
+def export_dict(threshold=500):
+    filename = './primary_dict.txt'
+
+    buf = []
+    buf_size = 1000
+    for w in en_dict:
+
+        if en_dict[w] < threshold:
+            continue
+
+        buf.append('%s\t%d' % (w, en_dict[w]))
+
+        if len(buf) >= buf_size:
+            append_line(filename, '\n'.join(buf))
+            buf = []
+
+    if buf:
+        append_line(filename, '\n'.join(buf))
+
+
 def larger_than(n):
     count = 0
     for w, freq in en_dict.items():
@@ -56,7 +76,9 @@ def larger_than(n):
 if __name__ == '__main__':
     # check_dic_freq()
     # export_dict_to_file()
-    print(larger_than(387))
+    # print(larger_than(387))
     print(larger_than(549)) # speling
-    print(larger_than(1000))
-    print(larger_than(10000))
+    # print(larger_than(1000))
+    # print(larger_than(10000))
+
+    export_dict(550)

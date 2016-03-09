@@ -98,5 +98,5 @@ def extract_dir_tokens(data_dir, output_dir):
 
 # extract_tokens(file_path, out_file)
 
-# extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram', '.')
-extract_dir_tokens(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/', '.')
+extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\2gram', '.')
+# extract_dir_tokens(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/', '.')
