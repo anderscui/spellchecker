@@ -5,7 +5,7 @@ import re
 import datetime
 
 from common.io import append_line
-from ngrams import is_english_ngram
+from ngrams import is_english_word, is_english_ngram
 
 
 def read_word_freq(line):
@@ -130,4 +130,5 @@ if __name__ == '__main__':
     # extract_unigrams(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\2gram\token-freq')
     # extract_unigrams(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/token-freq')
 
-    extract_ngrams(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\2gram\token-freq', '2gram')
+    # extract_ngrams(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\2gram\token-freq', '2gram')
+    extract_ngrams(r'/Users/andersc/data/eng-1M-ngrams-tokens/2gram-tokens', '2gram')
