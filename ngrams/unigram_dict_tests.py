@@ -46,7 +46,7 @@ def export_dict_to_file():
 
 
 def export_dict(threshold=500):
-    filename = './primary_dict.txt'
+    filename = '../data/ngrams/primary_dict.txt'
 
     buf = []
     buf_size = 1000
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # check_dic_freq()
     # export_dict_to_file()
     # print(larger_than(387))
-    print(larger_than(549))  # speling
+    # print(larger_than(549))  # speling
     # print(larger_than(1000))
     # print(larger_than(10000))
 

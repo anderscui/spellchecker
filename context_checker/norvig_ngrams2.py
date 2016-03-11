@@ -80,26 +80,27 @@ def avoid_long_words(key, N):
 
 # TODO: cachable
 # Pw = Pdist(datafile('../data/norvig/count_1w.txt'), N, avoid_long_words)
-Pw = Pdist(datafile('../data/ngrams/en_dict2.txt'), None, avoid_long_words)
+Pw = Pdist(datafile('../data/ngrams/primary_dict.txt'), None, avoid_long_words)
 
 
 # Pw['unregarded'] = 7557
 # N += Pw['unregarded']
 
-# def cPw(word, prev):
-#     """
-#     The conditional probability P(word | previous word)
-#     """
-#     try:
-#         return P2w[prev + ' ' + word] / float(Pw[prev])
-#     except KeyError:
-#         return Pw(word)
+def cPw(word, prev):
+    """
+    The conditional probability P(word | previous word)
+    """
+    try:
+        return P2w[prev + ' ' + word] / float(Pw[prev])
+    except KeyError:
+        return Pw(word)
 
 # TODO: cachable
 # P2w = Pdist(datafile('../data/norvig/count_2w.txt'), N)
+P2w = Pdist(datafile('../data/ngrams/bigram_dict_less.txt'), None)
 
 
-# print(cPw('sit', 'to') * cPw('down', 'sit') / cPw('sitdown', 'to'))
+print(cPw('sit', 'to') * cPw('down', 'sit') / cPw('sitdown', 'to'))
 
 # def sPw(s, n=2):
 #     if not s:
