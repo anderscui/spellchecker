@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}Spell Checker{% endblock %}
+
+{% block page_header %}
+{% endblock %}
+
+{% block body_block %}
+
+    <form id="search_form" role="form" method="get" action="{% url 'checker.index' %}">
+
+        <div class="input-group">
+            <input type="text" id="query" name="q" class="form-control"
+                   placeholder="Please input your words" value="{{ query }}" autocomplete="on"
+                   maxlength="64" tabindex="1" width="570px"/>
+
+            <span class="input-group-btn">
+                <input type="submit" id="check_button" class="btn btn-default" value="Check"/>
+            </span>
+        </div>
+        <br/>
+
+    </form>
+
+    <div id="search_result">
+
+        {% if query %}
+        {% if pos_list %}
+        <nav>
+            <ul class="pagination">
+                <li class="{% if page <= 1 %}disabled{% endif %}">
+                    <a href="{% url 'search.index' %}?q={{ query }}&pn={{ prev }}&pl={{ plen }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% for p in pages %}
+                    <li class="{% if p == page %}active{% endif %}">
+                        <a href="{% url 'search.index' %}?q={{ query }}&pn={{ p }}&pl={{ plen }}">{{ p }}</a> </li>
+                {% endfor %}
+                <li class="{% if page >= total_pages %}disabled{% endif %}">
+                    <a href="{% url 'search.index' %}?q={{ query }}&pn={{ next }}&pl={{ plen }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li>
+                    <span>{{ page }} / {{ total_pages }}</span>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="list-group">
+
+            {% for p in pos_list %}
+            <a href="http://www.lagou.com/jobs/{{ p.id }}.html?source=search" class="list-group-item">
+                <h4 class="list-group-item-heading">{{ p.name }} ({{ p.salary }})</h4>
+                <p class="list-group-item-text">{{ p.com_name }}</p>
+                <p class="list-group-item-text">{{ p.advantage }}</p>
+            </a>
+            {% endfor %}
+        </div>
+
+        <nav>
+            <ul class="pagination">
+                <li class="{% if page <= 1 %}disabled{% endif %}">
+                    <a href="{% url 'search.index' %}?q={{ query }}&pn={{ prev }}&pl={{ plen }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% for p in pages %}
+                    <li class="{% if p == page %}active{% endif %}">
+                        <a href="{% url 'search.index' %}?q={{ query }}&pn={{ p }}&pl={{ plen }}">{{ p }}</a> </li>
+                {% endfor %}
+                <li class="{% if page >= total_pages %}disabled{% endif %}">
+                    <a href="{% url 'search.index' %}?q={{ query }}&pn={{ next }}&pl={{ plen }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li>
+                    <span>{{ page }} / {{ total_pages }}</span>
+                </li>
+            </ul>
+        </nav>
+        {% else %}
+            <div>No words found.</div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+{% endblock %}
