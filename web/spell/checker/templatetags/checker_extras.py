@@ -10,8 +10,8 @@ def cur_time(fmt_str):
 
 
 side_pages = [(u'Spelling Checker', 'checker.index'),
+              (u'Spelling Bigram Checker', 'checker.bigram'),
               (u'Ngrams Stats', 'checker.stats'),
-              #(u'Quick Search', 'checker.index'),
               ]
 
 

@@ -251,6 +251,7 @@ def test_corrections():
     # ref: http://textblob.readthedocs.org/en/dev/quickstart.html#spelling-correction
     # TODO: too poor
     print(corrections('I havv goood speling!'))
+    print(correct('Thiss'))
 
     # Norvig's sample
     # 13 of 15 are OK, but acommodations and mispellings are left there.

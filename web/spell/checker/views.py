@@ -1,4 +1,5 @@
 # coding=utf-8
+import heapq
 import os
 import time
 
@@ -7,6 +8,7 @@ from caching.base import cached
 from django.shortcuts import render
 
 from django.conf import settings
+from math import log10
 
 is_cached = False
 
@@ -18,18 +20,27 @@ def get_obj():
 
 def data_dir():
     # return os.path.join(settings.BASE_DIR, '../data/')
+    # TODO: use relative path
     return r'D:\andersc\github\spellchecker\data'
 
 
-print(data_dir())
 ## Helpers
 def product(nums):
     return reduce(operator.mul, nums, 1)
 
 
+def missing_func(k, n):
+    return 1. / n
+
+
+def avoid_long_words(key, N):
+    """Estimate the probability of an unknown word."""
+    return 10. / (N * 10 ** len(key))
+
+
 class Pdist(dict):
     """A probability distribution estimated from counts in datafile."""
-    def __init__(self, data=[], N=None, missingfn=None):
+    def __init__(self, data=[], N=None, missingfn=missing_func):
         for key, count in data:
             self[key] = self.get(key, 0) + int(count)
         self.N = float(N or sum(self.itervalues()))
@@ -48,13 +59,12 @@ def datafile(name, sep='\t'):
         yield line.split(sep)
 
 
-def avoid_long_words(key, N):
-    """Estimate the probability of an unknown word."""
-    return 10. / (N * 10 ** len(key))
-
-
 def get_primary_dict():
     return Pdist(datafile('ngrams/primary_dict.txt'), None, avoid_long_words)
+
+
+def get_bigram_dict():
+    return Pdist(datafile('../data/ngrams/bigram_dict_less.txt'), None)
 
 
 def get_valid_prefixes():
@@ -63,26 +73,29 @@ def get_valid_prefixes():
 
 def get_p1edit():
     """the prob of single edits"""
+    # TODO: use a better missingfn
     return Pdist(datafile('norvig/count_1edit.txt'))
 
 
 Pw = cached(get_primary_dict, 'primary_dict', 600)
+P2w = cached(get_bigram_dict, 'bigram_dict', 600)
 PREFIXES = cached(get_valid_prefixes, 'prefixes', 600)
-# P1edit = cached(get_p1edit, 'p1edit', 600)
-P1edit = get_p1edit()
+P1edit = cached(get_p1edit, 'p1edit', 600)
 
-# def cPw(word, prev):
-#     """
-#     The conditional probability P(word | previous word)
-#     """
-#     try:
-#         return P2w[prev + ' ' + word] / float(Pw[prev])
-#     except KeyError:
-#         return Pw(word)
-#
-# # TODO: cachable
-# # P2w = Pdist(datafile('../data/norvig/count_2w.txt'), N)
-# P2w = Pdist(datafile('../data/ngrams/bigram_dict_less.txt'), None)
+
+def cPw(word, prev):
+    """
+    The conditional probability P(word | previous word)
+    """
+    try:
+        return P2w[prev + ' ' + word] / float(Pw[prev])
+    except KeyError:
+        return Pw(word)
+
+
+def sPw(w, prev, next):
+    print(' '.join([prev, w, next, str(log10(cPw(w, prev)) + log10(cPw(next, w)))]))
+    return log10(cPw(w, prev)) + log10(cPw(next, w))
 
 
 # common error rate
@@ -147,11 +160,37 @@ def edits(word, d=2):
     return results
 
 
-def correct(w):
+def correct(w, n=1):
 
     candicates = edits(w).items()
-    c, edit = max(candicates, key=lambda (c, e): Pedit(e) * Pw(c))
-    return [c]
+    most_likely = heapq.nlargest(n, candicates, key=lambda (c, e): Pedit(e) * Pw(c))
+    # c, edit = max(candicates, key=lambda (c, e): Pedit(e) * Pw(c))
+    return [c for c, edit in most_likely]
+
+
+def correct_bigram(words, n=1):
+
+    print(words)
+    print(len(words))
+    print()
+
+    idx = -1
+    for i, elem in enumerate(words):
+        if elem not in Pw:
+            idx = i
+            break
+    print('idx: ' + str(idx))
+    if idx < 0:
+        return [' '.join(words)]
+
+    candicates = edits(words[idx]).items()
+    prev = words[idx-1] if idx > 0 else '<S>'
+    next = words[idx+1] if idx < (len(words) - 1) else '</S>'
+    most_likely = heapq.nlargest(n, candicates, key=lambda (c, e): log10(Pedit(e)) + sPw(c, prev, next))
+    return [' '.join(words[0:idx] + [c] + words[idx+1:]) for c, edit in most_likely]
+
+
+# view functions ###
 
 
 def index(request):
@@ -160,8 +199,26 @@ def index(request):
     if not word:
         return render(request, 'checker/index.html', {'page_name': 'checker.index'})
 
-    c = correct(word)
+    n = request.GET.get('n', '5')
+    grams = request.GET.get('grams', 1)
+
+    in_dict = 'real word' if word in Pw else 'non-word'
+    c = correct(word, int(n))
     return render(request, 'checker/index.html', {'page_name': 'checker.index',
+                                                  'word': word,
+                                                  'in_dict': in_dict,
+                                                  'corrections': c})
+
+
+def check_bigram(request):
+
+    word = request.GET.get('word', '')
+    if not word:
+        return render(request, 'checker/bigram.html', {'page_name': 'checker.bigram'})
+
+    n = request.GET.get('n', '5')
+    c = correct_bigram(word.split(' '), int(n))
+    return render(request, 'checker/bigram.html', {'page_name': 'checker.bigram',
                                                   'word': word,
                                                   'corrections': c})
 
