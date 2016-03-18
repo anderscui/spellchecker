@@ -74,7 +74,7 @@ def extract_dir_tokens(data_dir, output_dir):
         # print(f)
         # print(os.path.getsize(f))
         name, ext = os.path.splitext(f)
-        output_file = output_dir + name + '-out.txt'
+        output_file = output_dir + name + '.txt'
         print('generatint to ' + output_file)
 
         if not os.path.exists(output_file):
@@ -98,5 +98,5 @@ def extract_dir_tokens(data_dir, output_dir):
 
 # extract_tokens(file_path, out_file)
 
-extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\2gram', '.')
+extract_dir_tokens(r'D:\andersc\downloads\googlebooks-eng-1M-ngrams\3gram-raw', '.')
 # extract_dir_tokens(r'/Users/andersc/data/googlebooks-eng-1M-ngrams/1gram/', '.')
